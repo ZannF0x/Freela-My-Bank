@@ -1,5 +1,6 @@
 package com.zann.dev.mybank.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -7,10 +8,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuProvider
 import com.zann.dev.mybank.R
+import com.zann.dev.mybank.constants.KeysConstants
 import com.zann.dev.mybank.constants.MenuConstants
 import com.zann.dev.mybank.databinding.ActivityMainBinding
 import com.zann.dev.mybank.models.Category
@@ -26,6 +29,15 @@ class MainActivity : AppCompatActivity() {
     private var listSize: Int = 0
     private val mainViewModel: MainViewModel by viewModels {
         MainViewModel.MainViewModelFactory()
+    }
+    private var result = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.let {
+                getDataResult(it)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +58,7 @@ class MainActivity : AppCompatActivity() {
             }
             textFieldCategory.error = null
             val objectCategory = Category(
-                title = textInputCategory.text.toString(),
-                totalPrice = (1..100).random().toDouble()
+                title = textInputCategory.text.toString()
             )
             mainViewModel.setDataItem(objectCategory)
         }
@@ -57,9 +68,7 @@ class MainActivity : AppCompatActivity() {
         adapter = CategoryAdapter(
             onDeleteClick = { initConfirmDialog(it) },
             onMoreItemClick = {
-                val itemPosition = adapter.getItemPosition(it)
-                val category = Category("Item mudado!")
-                adapter.changeDataByPosition(itemPosition, category)
+                openAccountListActivity(it, adapter.getItemPosition(it))
             }
         )
         binding.recyclerViewCategory.adapter = adapter
@@ -128,6 +137,21 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
 
+    private fun openAccountListActivity(category: Category, position: Int) {
+        val intent = Intent(this, AccountListActivity::class.java)
+        intent.apply {
+            putExtra(KeysConstants.KEY_CATEGORY, category)
+            putExtra(KeysConstants.CATEGORY_OLD_POSITION, position)
+        }
+        result.launch(intent)
+    }
+
+    private fun getDataResult(intentData: Intent) {
+        val newCategory = intentData.getSerializableExtra(KeysConstants.KEY_CATEGORY) as Category
+        val oldPosition = intentData.getIntExtra(KeysConstants.CATEGORY_OLD_POSITION, 0)
+        adapter.changeDataByPosition(oldPosition, newCategory)
+        Log.d("DataChanged", "$oldPosition, $newCategory")
     }
 }

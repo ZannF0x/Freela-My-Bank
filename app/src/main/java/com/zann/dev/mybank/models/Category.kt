@@ -1,10 +1,11 @@
 package com.zann.dev.mybank.models
 
+import com.zann.dev.mybank.utils.PriceUtils
 import java.io.Serializable
 
 data class Category(
     val title: String,
-    val accountList: List<Account> = emptyList(),
+    val accountList: MutableList<Account> = mutableListOf(),
     val totalAccount: Int = accountList.size,
-    val totalPrice: Double = 0.0
+    var totalPrice: Double = PriceUtils.getTotalPrice(accountList)
 ): Serializable

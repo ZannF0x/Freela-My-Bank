@@ -81,24 +81,13 @@ class CategoryAdapter(
         ) {
             title.text = category.title
             details.text = category.totalAccount.toString()
-            textPrice.text = category.totalPrice.toString()//CoinUtil.doubleToReal(getTotalPrice(category.accountList))
+            textPrice.text = CoinUtil.doubleToReal(category.totalPrice)
             buttonDelete.setOnClickListener {
                 onDeleteClick(category)
             }
             buttonList.setOnClickListener {
                 onMoreItemClick(category)
             }
-        }
-
-        private fun getTotalPrice(list: List<Account>): Double {
-            var totalPrice = 0.0
-            if (list.isEmpty()) {
-                return totalPrice
-            }
-            list.forEach { account ->
-                totalPrice += account.price
-            }
-            return totalPrice
         }
 
     }
