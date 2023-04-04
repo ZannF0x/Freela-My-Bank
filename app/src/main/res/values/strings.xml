@@ -9,7 +9,13 @@
     <string name="main_activity_error_message">Por favor, preencha o campo</string>
     <string name="main_activity_confirm_dialog_title">Tem certeza disso?</string>
     <string name="main_activity_confirm_dialog_description">A categoria %s será removida</string>
+    <string name="main_activity_few_items">Não há itens o suficiente para ordenação</string>
 
     <string name="content_description_delete_button">botão de deletar</string>
     <string name="content_description_list_button">botão de listagem</string>
+
+    <string name="menu_option_order_by_name">Ordenar por nome</string>
+    <string name="menu_option_order_by_price">Ordenar por preço</string>
+    <string name="menu_option_order_by_count">Ordenar por contas</string>
+
 </resources>

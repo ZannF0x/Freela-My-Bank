@@ -19,11 +19,7 @@ class CategoryAdapter(
 
     fun setDataCategory(categories: MutableList<Category>) {
         categoryList = categories
-        if (categoryList.size == 1) {
-            this.notifyItemInserted(categoryList.size - 1)
-            return
-        }
-        this.notifyItemRangeChanged(0, categories.size-1)
+        this.notifyDataSetChanged()
     }
 
     fun changeDataByPosition(oldPosition: Int, newItem: Category) {
@@ -85,7 +81,7 @@ class CategoryAdapter(
         ) {
             title.text = category.title
             details.text = category.totalAccount.toString()
-            textPrice.text = CoinUtil.doubleToReal(getTotalPrice(category.accountList))
+            textPrice.text = category.totalPrice.toString()//CoinUtil.doubleToReal(getTotalPrice(category.accountList))
             buttonDelete.setOnClickListener {
                 onDeleteClick(category)
             }
