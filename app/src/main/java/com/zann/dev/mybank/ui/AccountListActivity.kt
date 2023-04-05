@@ -4,8 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import com.zann.dev.mybank.R
 import com.zann.dev.mybank.constants.KeysConstants
 import com.zann.dev.mybank.databinding.ActivityAccountListBinding
@@ -19,6 +21,8 @@ class AccountListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAccountListBinding
     private lateinit var accountAdapter: AccountAdapter
     private var oldPositionExtra: Int? = null
+    private var oldPositionToChangeView: Int? = null
+    private var confirmDialog: AlertDialog? = null
     private val accountListViewModel: AccountListViewModel by viewModels {
         AccountListViewModel.AccountListViewModelFactory()
     }
@@ -46,12 +50,7 @@ class AccountListActivity : AppCompatActivity() {
     private fun initViews() = with(binding) {
         initRecyclerView()
         buttonAddAccount.setOnClickListener {
-            if (textInputAccount.text.toString().isBlank() ||
-                textInputValue.text.toString().isBlank() ||
-                textInputDay.text.toString().isBlank() ||
-                textInputMonth.text.toString().isBlank() ||
-                textInputYear.text.toString().isBlank()
-            ) {
+            if (validateForm()) {
                 Toast.makeText(
                     this@AccountListActivity,
                     getString(R.string.account_list_activity_error_input),
@@ -62,17 +61,39 @@ class AccountListActivity : AppCompatActivity() {
             val account = Account(
                 title = textInputAccount.text.toString(),
                 price = textInputValue.text.toString().toDouble(),
-                date = "${textInputDay.text.toString()}/${textInputMonth.text.toString()}/${textInputYear.text.toString()}"
+                day = textInputDay.text.toString(),
+                month = textInputMonth.text.toString(),
+                year = textInputYear.text.toString()
             )
             accountListViewModel.setAccountData(account)
+        }
+        buttonEditAccount.setOnClickListener {
+            if (validateForm()) {
+                Toast.makeText(
+                    this@AccountListActivity,
+                    getString(R.string.account_list_activity_error_input),
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+            val account = Account(
+                title = textInputAccount.text.toString(),
+                price = textInputValue.text.toString().toDouble(),
+                day = textInputDay.text.toString(),
+                month = textInputMonth.text.toString(),
+                year = textInputYear.text.toString()
+            )
+            oldPositionToChangeView?.let {
+                initConfirmEditDialog(account, it)
+            }
         }
     }
 
     private fun initRecyclerView() {
         accountAdapter = AccountAdapter(
-            onDeleteClick = {  },
             onEditItemClick = {
-                setResult()
+                setFormToEdit(it)
+                accountListViewModel.setOldPositionToChange(accountAdapter.getItemPosition(it))
             }
         )
         binding.recyclerViewAccount.adapter = accountAdapter
@@ -98,6 +119,31 @@ class AccountListActivity : AppCompatActivity() {
         oldPosition.observe(this@AccountListActivity) { position ->
             oldPositionExtra = position
         }
+        oldPositionToChange.observe(this@AccountListActivity) { position ->
+            position?.let {
+                oldPositionToChangeView = it
+                enableEditButton()
+            } ?: run {
+                restoreButtons()
+            }
+        }
+    }
+
+    private fun validateForm(): Boolean {
+        return (binding.textInputAccount.text.toString().isBlank() ||
+                binding.textInputValue.text.toString().isBlank() ||
+                binding.textInputDay.text.toString().isBlank() ||
+                binding.textInputMonth.text.toString().isBlank() ||
+                binding.textInputYear.text.toString().isBlank()
+                )
+    }
+
+    private fun setFormToEdit(account: Account) = with(binding) {
+        textInputAccount.setText(account.title)
+        textInputDay.setText(account.day)
+        textInputMonth.setText(account.month)
+        textInputYear.setText(account.year)
+        textInputValue.setText(account.price.toString())
     }
 
     private fun setResult() {
@@ -112,6 +158,41 @@ class AccountListActivity : AppCompatActivity() {
         }
         setResult(RESULT_OK, intent)
         finish()
+    }
+
+    private fun initConfirmEditDialog(account: Account, oldPosition: Int) {
+        if (confirmDialog == null || confirmDialog?.isShowing == false) {
+            confirmDialog = AlertDialog.Builder(this).apply {
+                this.setIcon(R.drawable.ic_edit)
+                this.setTitle(getString(R.string.account_list_activity_confirm_dialog_title))
+                this.setMessage(
+                    getString(R.string.account_list_activity_confirm_dialog_description)
+                )
+                this.setPositiveButton(getString(R.string.common_yes)) { _, _ ->
+                    accountAdapter.changeDataByPosition(oldPosition, account)
+                    accountListViewModel.setOldPositionToChange(null)
+                    confirmDialog?.dismiss()
+                }
+                this.setNegativeButton(getString(R.string.common_no)) { _, _ ->
+                    accountListViewModel.setOldPositionToChange(null)
+                    confirmDialog?.dismiss()
+                }
+                this.setCancelable(false)
+            }.create()
+            confirmDialog?.show()
+        }
+    }
+
+    private fun enableEditButton() {
+        binding.buttonAddAccount.visibility = View.INVISIBLE
+        binding.buttonAddAccount.isEnabled = false
+        binding.buttonEditAccount.visibility = View.VISIBLE
+    }
+    private fun restoreButtons() {
+        binding.buttonAddAccount.visibility = View.VISIBLE
+        binding.buttonEditAccount.visibility = View.GONE
+        binding.buttonAddAccount.isEnabled = true
+        oldPositionToChangeView = null
     }
 
 }

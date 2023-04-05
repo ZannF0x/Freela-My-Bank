@@ -23,6 +23,10 @@ class AccountListViewModel: ViewModel() {
     val oldPosition: LiveData<Int>
         get() = _oldPosition
 
+    private var _oldPositionToChange = MutableLiveData<Int?>()
+    val oldPositionToChange: LiveData<Int?>
+        get() = _oldPositionToChange
+
     fun setCategoryDataExtras(category: Category?) {
         category?.let {
             _category.value = it
@@ -40,6 +44,10 @@ class AccountListViewModel: ViewModel() {
     fun setAccountData(account: Account) {
         listOfAccount.add(account)
         _accountList.value = listOfAccount
+    }
+
+    fun setOldPositionToChange(oldPosition: Int?) {
+        _oldPositionToChange.value = oldPosition
     }
 
     class AccountListViewModelFactory() : ViewModelProvider.Factory {

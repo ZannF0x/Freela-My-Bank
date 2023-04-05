@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Bank</string>
+    <string name="app_name">Contas</string>
 
     <string name="common_yes">Sim</string>
     <string name="common_no">Não</string>
@@ -10,13 +10,14 @@
     <string name="main_activity_hint_category">Categoria</string>
     <string name="main_activity_button_add">Adicionar</string>
     <string name="main_activity_error_message">Por favor, preencha o campo</string>
-    <string name="main_activity_confirm_dialog_title">Tem certeza disso?</string>
-    <string name="main_activity_confirm_dialog_description">A categoria %s será removida</string>
     <string name="main_activity_few_items">Não há itens o suficiente para ordenação</string>
 
     <string name="account_list_activity_account">Despesa</string>
     <string name="account_list_activity_value">Valor da despesa</string>
     <string name="account_list_activity_error_input">Preencha todos os campos</string>
+    <string name="account_list_activity_confirm_dialog_title">Tem certeza disso?</string>
+    <string name="account_list_activity_confirm_dialog_description">Esta conta será editada</string>
+    <string name="account_list_activity_edit">Editar</string>
 
     <string name="content_description_delete_button">botão de deletar</string>
     <string name="content_description_list_button">botão de listagem</string>

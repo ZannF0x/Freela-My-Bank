@@ -7,10 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zann.dev.mybank.databinding.AccountItemBinding
 import com.zann.dev.mybank.models.Account
+import com.zann.dev.mybank.models.Category
 import com.zann.dev.mybank.utils.CoinUtil
 
 class AccountAdapter(
-    private val onDeleteClick: (Account) -> Unit,
     private val onEditItemClick: (Account) -> Unit
 ) : RecyclerView.Adapter<AccountAdapter.AccountViewHolder>() {
 
@@ -22,6 +22,14 @@ class AccountAdapter(
     }
 
     fun getData() = accountList
+
+    fun changeDataByPosition(oldPosition: Int, newItem: Account) {
+        accountList.removeAt(oldPosition)
+        accountList.add(oldPosition, newItem)
+        this.notifyItemChanged(oldPosition)
+    }
+
+    fun getItemPosition(account: Account) = accountList.indexOf(account)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountViewHolder {
         return AccountViewHolder(
@@ -38,7 +46,6 @@ class AccountAdapter(
     override fun onBindViewHolder(holder: AccountViewHolder, position: Int) {
         holder.bind(
             accountList[position],
-            onDeleteClick,
             onEditItemClick
         )
     }
@@ -50,30 +57,24 @@ class AccountAdapter(
         private val title: TextView
         private val details: TextView
         private val textPrice: TextView
-        private val buttonDelete: ImageView
         private val buttonEdit: ImageView
 
         init {
             title = itemView.textTitle
             details = itemView.textInfo
             textPrice = itemView.textPrice
-            buttonDelete = itemView.imageDelete
             buttonEdit = itemView.imageEdit
         }
 
         fun bind(
-            category: Account,
-            onDeleteClick: (Account) -> Unit,
-            onMoreItemClick: (Account) -> Unit
+            account: Account,
+            onEditItemClick: (Account) -> Unit
         ) {
-            title.text = category.title
-            details.text = category.date
-            textPrice.text = CoinUtil.doubleToReal(category.price)
-            buttonDelete.setOnClickListener {
-                onDeleteClick(category)
-            }
+            title.text = account.title
+            details.text = account.date
+            textPrice.text = CoinUtil.doubleToReal(account.price)
             buttonEdit.setOnClickListener {
-                onMoreItemClick(category)
+                onEditItemClick(account)
             }
         }
 

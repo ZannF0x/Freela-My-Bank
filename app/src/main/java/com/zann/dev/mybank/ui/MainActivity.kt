@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.MenuProvider
 import com.zann.dev.mybank.R
 import com.zann.dev.mybank.constants.KeysConstants
@@ -19,13 +20,11 @@ import com.zann.dev.mybank.databinding.ActivityMainBinding
 import com.zann.dev.mybank.models.Category
 import com.zann.dev.mybank.ui.adapters.CategoryAdapter
 import com.zann.dev.mybank.viewmodels.MainViewModel
-import java.util.Random
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: CategoryAdapter
-    private var confirmDialog: AlertDialog? = null
     private var listSize: Int = 0
     private val mainViewModel: MainViewModel by viewModels {
         MainViewModel.MainViewModelFactory()
@@ -44,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         initViews()
         subscribeViews()
     }
@@ -66,32 +66,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun initAdapter() {
         adapter = CategoryAdapter(
-            onDeleteClick = { initConfirmDialog(it) },
             onMoreItemClick = {
                 openAccountListActivity(it, adapter.getItemPosition(it))
             }
         )
         binding.recyclerViewCategory.adapter = adapter
-    }
-
-    private fun initConfirmDialog(category: Category) {
-        if (confirmDialog == null || confirmDialog?.isShowing == false) {
-            confirmDialog = AlertDialog.Builder(this).apply {
-                this.setIcon(R.drawable.ic_delete)
-                this.setTitle(getString(R.string.main_activity_confirm_dialog_title))
-                this.setMessage(
-                    getString(R.string.main_activity_confirm_dialog_description, category.title)
-                )
-                this.setPositiveButton(getString(R.string.common_yes)) { _, _ ->
-                    adapter.removeItem(category)
-                    confirmDialog?.dismiss()
-                }
-                this.setNegativeButton(getString(R.string.common_no)) { _, _ ->
-                    confirmDialog?.dismiss()
-                }
-            }.create()
-            confirmDialog?.show()
-        }
     }
 
     private fun subscribeViews() {

@@ -15,4 +15,19 @@ object CoinUtil {
         return "R$ " + numberFormat.format(valor)
     }
 
+    fun realToDouble(valor: String?): Double {
+        if (valor == null) return 0.0
+        val valorReplaced = valor
+            .replace("R$", "")
+            .replace(" ", "")
+            .replace(" ", "")
+            .replace(".", "")
+            .replace(",", ".")
+        return if (valorReplaced.isNotEmpty()) {
+            valorReplaced.toDouble()
+        } else {
+            0.0
+        }
+    }
+
 }

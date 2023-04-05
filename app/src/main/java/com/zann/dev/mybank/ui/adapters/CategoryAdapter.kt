@@ -11,7 +11,6 @@ import com.zann.dev.mybank.models.Category
 import com.zann.dev.mybank.utils.CoinUtil
 
 class CategoryAdapter(
-    private val onDeleteClick: (Category) -> Unit,
     private val onMoreItemClick: (Category) -> Unit
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
@@ -51,7 +50,6 @@ class CategoryAdapter(
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         holder.bind(
             categoryList[position],
-            onDeleteClick,
             onMoreItemClick
         )
     }
@@ -63,29 +61,21 @@ class CategoryAdapter(
         private val title: TextView
         private val details: TextView
         private val textPrice: TextView
-        private val buttonDelete: ImageView
-        private val buttonList: ImageView
 
         init {
             title = itemView.textTitle
             details = itemView.textInfo
             textPrice = itemView.textPrice
-            buttonDelete = itemView.imageDelete
-            buttonList = itemView.imageList
         }
 
         fun bind(
             category: Category,
-            onDeleteClick: (Category) -> Unit,
             onMoreItemClick: (Category) -> Unit
         ) {
             title.text = category.title
             details.text = category.totalAccount.toString()
             textPrice.text = CoinUtil.doubleToReal(category.totalPrice)
-            buttonDelete.setOnClickListener {
-                onDeleteClick(category)
-            }
-            buttonList.setOnClickListener {
+            title.setOnClickListener {
                 onMoreItemClick(category)
             }
         }
