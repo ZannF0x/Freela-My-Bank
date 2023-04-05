@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
+    <string name="common_day">Day</string>
+    <string name="common_month">Month</string>
+    <string name="common_year">Year</string>
+
+    <string name="main_activity_hint_category">Category</string>
+    <string name="main_activity_button_add">Add</string>
+    <string name="main_activity_error_message">Please fill in the field</string>
+    <string name="main_activity_few_items">Not enough items to sort</string>
+
+    <string name="account_list_activity_account">Account</string>
+    <string name="account_list_activity_value">Account value</string>
+    <string name="account_list_activity_error_input">Fill in all fields</string>
+    <string name="account_list_activity_confirm_dialog_title">Are you sure about that?</string>
+    <string name="account_list_activity_confirm_dialog_description">This account will be edited</string>
+    <string name="account_list_activity_edit">To edit</string>
+
+    <string name="content_description_delete_button">button</string>
+    <string name="content_description_list_button">button</string>
+
+    <string name="menu_option_order_by_name">Sort by name</string>
+    <string name="menu_option_order_by_price">Sort by price</string>
+    <string name="menu_option_order_by_date">Sort by date</string>
+    <string name="menu_option_order_by_count">Sort by accounts</string>
+</resources>
