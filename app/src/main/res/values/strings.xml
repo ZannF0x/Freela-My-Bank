@@ -24,6 +24,7 @@
 
     <string name="menu_option_order_by_name">Ordenar por nome</string>
     <string name="menu_option_order_by_price">Ordenar por preço</string>
+    <string name="menu_option_order_by_date">Ordenar por data</string>
     <string name="menu_option_order_by_count">Ordenar por contas</string>
 
 </resources>

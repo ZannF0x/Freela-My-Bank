@@ -4,12 +4,17 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuProvider
 import com.zann.dev.mybank.R
 import com.zann.dev.mybank.constants.KeysConstants
+import com.zann.dev.mybank.constants.MenuConstants
 import com.zann.dev.mybank.databinding.ActivityAccountListBinding
 import com.zann.dev.mybank.models.Account
 import com.zann.dev.mybank.models.Category
@@ -22,6 +27,7 @@ class AccountListActivity : AppCompatActivity() {
     private lateinit var accountAdapter: AccountAdapter
     private var oldPositionExtra: Int? = null
     private var oldPositionToChangeView: Int? = null
+    private var accountListSize: Int = 0
     private var confirmDialog: AlertDialog? = null
     private val accountListViewModel: AccountListViewModel by viewModels {
         AccountListViewModel.AccountListViewModelFactory()
@@ -34,6 +40,7 @@ class AccountListActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
         getExtras()
+        initOptionsMenu()
         initViews()
         subscribeViews()
     }
@@ -113,6 +120,7 @@ class AccountListActivity : AppCompatActivity() {
         accountList.observe(this@AccountListActivity) { list ->
             list?.let { safeList ->
                 Log.d("ListOfAccount:", safeList.toString())
+                accountListSize = safeList.size
                 accountAdapter.setDataAccount(safeList)
             }
         }
@@ -193,6 +201,42 @@ class AccountListActivity : AppCompatActivity() {
         binding.buttonEditAccount.visibility = View.GONE
         binding.buttonAddAccount.isEnabled = true
         oldPositionToChangeView = null
+    }
+
+    private fun initOptionsMenu() {
+        addMenuProvider(object : MenuProvider {
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.account_options_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                if (accountListSize <= 1) {
+                    Toast.makeText(
+                        this@AccountListActivity,
+                        getString(R.string.main_activity_few_items),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return false
+                }
+                return when(menuItem.itemId) {
+                    R.id.option_order_by_name -> {
+                        accountListViewModel.orderData(MenuConstants.ORDER_BY_NAME)
+                        true
+                    }
+                    R.id.option_order_by_price -> {
+                        accountListViewModel.orderData(MenuConstants.ORDER_BY_PRICE)
+                        true
+                    }
+                    R.id.option_order_by_date -> {
+                        accountListViewModel.orderData(MenuConstants.ORDER_BY_DATE)
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+        })
     }
 
 }

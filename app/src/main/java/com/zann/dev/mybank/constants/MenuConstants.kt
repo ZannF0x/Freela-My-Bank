@@ -4,4 +4,5 @@ object MenuConstants {
     const val ORDER_BY_NAME = "ORDER_BY_NAME"
     const val ORDER_BY_COUNT = "ORDER_BY_COUNT"
     const val ORDER_BY_PRICE = "ORDER_BY_PRICE"
+    const val ORDER_BY_DATE = "ORDER_BY_DATE"
 }

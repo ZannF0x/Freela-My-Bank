@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.zann.dev.mybank.constants.MenuConstants
 import com.zann.dev.mybank.models.Account
 import com.zann.dev.mybank.models.Category
 
@@ -48,6 +49,21 @@ class AccountListViewModel: ViewModel() {
 
     fun setOldPositionToChange(oldPosition: Int?) {
         _oldPositionToChange.value = oldPosition
+    }
+
+    fun orderData(orderBy: String) {
+        when(orderBy) {
+            MenuConstants.ORDER_BY_NAME -> {
+                listOfAccount.sortBy { it.title }
+            }
+            MenuConstants.ORDER_BY_DATE -> {
+                listOfAccount.sortBy { it.date }
+            }
+            MenuConstants.ORDER_BY_PRICE -> {
+                listOfAccount.sortBy { it.price }
+            }
+        }
+        _accountList.value = listOfAccount
     }
 
     class AccountListViewModelFactory() : ViewModelProvider.Factory {
